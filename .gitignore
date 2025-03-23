@@ -34,7 +34,7 @@ whatsapp_scraper.log
 scheduler.log
 *.env
 *.env.*
-whatsapp/
+
 
 # Virtual Environment
 venv/
