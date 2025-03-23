@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}Media Files - WhatsApp Automation{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h1 class="h3 mb-3"><i class="fas fa-photo-video text-success me-2"></i>Media Files</h1>
+        <p class="lead">View and filter media files extracted from WhatsApp Web.</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card filter-card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">
+            <i class="fas fa-filter me-2"></i>Filters
+        </h5>
+    </div>
+    <div class="card-body">
+        <form class="filter-form" method="get">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="type" class="form-label">Media Type</label>
+                    <select name="type" id="type" class="form-select">
+                        <option value="">All Types</option>
+                        {% for type_code, type_name in media_types %}
+                            <option value="{{ type_code }}" {% if filters.type == type_code %}selected{% endif %}>{{ type_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="date_from" class="form-label">From Date</label>
+                    <input type="text" class="form-control datepicker" id="date_from" name="date_from" value="{{ filters.date_from|default:'' }}" placeholder="From date">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="date_to" class="form-label">To Date</label>
+                    <input type="text" class="form-control datepicker" id="date_to" name="date_to" value="{{ filters.date_to|default:'' }}" placeholder="To date">
+                </div>
+                
+                <div class="col-md-3">
+                    <label for="downloaded" class="form-label">Downloaded</label>
+                    <select name="downloaded" id="downloaded" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="yes" {% if filters.downloaded == 'yes' %}selected{% endif %}>Downloaded</option>
+                        <option value="no" {% if filters.downloaded == 'no' %}selected{% endif %}>Not Downloaded</option>
+                    </select>
+                </div>
+                
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                    <a href="{% url 'whatsapp:media_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-sync-alt me-2"></i>Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Media Gallery -->
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Media Gallery</h5>
+            <span class="badge bg-light text-success">{{ page_obj.paginator.count }} items</span>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if page_obj %}
+            <div class="row">
+                {% for media in page_obj %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card media-card h-100">
+                            <div class="position-relative">
+                                {% if media.file_type == 'image' %}
+                                    <a href="{{ media.file_url }}" target="_blank">
+                                        <img src="{{ media.file_url }}" class="card-img-top media-thumbnail" alt="Image">
+                                    </a>
+                                    <span class="badge bg-success media-type-badge">Image</span>
+                                {% elif media.file_type == 'video' %}
+                                    <div class="position-relative">
+                                        <a href="{{ media.file_url }}" target="_blank">
+                                            <div class="media-thumbnail d-flex align-items-center justify-content-center bg-dark">
+                                                <i class="fas fa-play-circle fa-3x text-light"></i>
+                                            </div>
+                                        </a>
+                                        <span class="badge bg-primary media-type-badge">Video</span>
+                                    </div>
+                                {% elif media.file_type == 'audio' %}
+                                    <div class="media-thumbnail d-flex align-items-center justify-content-center bg-info">
+                                        <i class="fas fa-volume-up fa-3x text-light"></i>
+                                    </div>
+                                    <span class="badge bg-info media-type-badge">Audio</span>
+                                {% else %}
+                                    <div class="media-thumbnail d-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-file fa-3x text-secondary"></i>
+                                    </div>
+                                    <span class="badge bg-secondary media-type-badge">{{ media.file_type }}</span>
+                                {% endif %}
+                                
+                                {% if media.downloaded %}
+                                    <span class="badge bg-success position-absolute bottom-0 start-0 m-2">
+                                        <i class="fas fa-check-circle me-1"></i>Downloaded
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning position-absolute bottom-0 start-0 m-2">
+                                        <i class="fas fa-exclamation-circle me-1"></i>Not Downloaded
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title text-truncate">{{ media.file_name }}</h6>
+                                <p class="card-text">
+                                    <small class="text-muted">{{ media.created_at|date:"M d, Y H:i" }}</small>
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="{{ media.file_url }}" class="btn btn-sm btn-outline-success flex-grow-1" target="_blank">
+                                        <i class="fas fa-external-link-alt me-1"></i>Open
+                                    </a>
+                                    {% if media.file_path %}
+                                        <a href="{{ media.file_path }}" class="btn btn-sm btn-outline-primary flex-grow-1" download>
+                                            <i class="fas fa-download me-1"></i>Download
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'whatsapp:message_detail' media.chat_message.id %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-comment"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% else %}
+            <div class="alert alert-info mb-0">No media files found matching your criteria.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

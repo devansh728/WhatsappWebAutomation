@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}Message Details - WhatsApp Automation{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-3">
+                <i class="fas fa-comment-alt text-success me-2"></i>Message Details
+            </h1>
+            <a href="{% url 'whatsapp:message_list' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Messages
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Message Details -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Message Content</h5>
+            </div>
+            <div class="card-body">
+                <div class="message-bubble {% if message.sender == 'You' %}message-outgoing{% else %}message-incoming{% endif %}">
+                    <div class="d-flex justify-content-between">
+                        <span class="message-sender">{{ message.sender }}</span>
+                        <small class="text-muted">{{ message.timestamp|date:"M d, Y H:i:s" }}</small>
+                    </div>
+                    <div class="message-text mt-2">
+                        {{ message.message|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Message Information</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Sender:</strong>
+                        <span class="badge bg-success">{{ message.sender }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Receiver:</strong>
+                        <span class="badge bg-secondary">{{ message.receiver }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Date:</strong>
+                        <span>{{ message.date|date:"F d, Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Time:</strong>
+                        <span>{{ message.timestamp|date:"H:i:s" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Chat ID:</strong>
+                        <small class="text-muted">{{ message.chat_id }}</small>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <strong>Has Media:</strong>
+                        {% if message.media_urls %}
+                            <span class="badge bg-success">Yes</span>
+                        {% else %}
+                            <span class="badge bg-secondary">No</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Media Display -->
+{% if media_data or media_files %}
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+            <i class="fas fa-images me-2"></i>Media Files
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% if media_files %}
+                {% for media in media_files %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card media-card h-100">
+                            <div class="position-relative">
+                                {% if media.file_type == 'image' %}
+                                    <a href="{{ media.file_url }}" target="_blank">
+                                        <img src="{{ media.file_url }}" class="card-img-top media-thumbnail" alt="Image">
+                                    </a>
+                                    <span class="badge bg-success media-type-badge">Image</span>
+                                {% elif media.file_type == 'video' %}
+                                    <div class="position-relative">
+                                        <a href="{{ media.file_url }}" target="_blank">
+                                            <div class="media-thumbnail d-flex align-items-center justify-content-center bg-dark">
+                                                <i class="fas fa-play-circle fa-3x text-light"></i>
+                                            </div>
+                                        </a>
+                                        <span class="badge bg-primary media-type-badge">Video</span>
+                                    </div>
+                                {% else %}
+                                    <div class="media-thumbnail d-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-file fa-3x text-secondary"></i>
+                                    </div>
+                                    <span class="badge bg-secondary media-type-badge">{{ media.file_type }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title text-truncate">{{ media.file_name }}</h6>
+                                <p class="card-text">
+                                    <small class="text-muted">{{ media.created_at|date:"M d, Y H:i" }}</small>
+                                </p>
+                                <a href="{{ media.file_url }}" class="btn btn-sm btn-outline-success" target="_blank">
+                                    <i class="fas fa-external-link-alt me-2"></i>Open
+                                </a>
+                                {% if media.file_path %}
+                                    <a href="{{ media.file_path }}" class="btn btn-sm btn-outline-primary" download>
+                                        <i class="fas fa-download me-2"></i>Download
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% elif media_data %}
+                {% for media in media_data %}
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card media-card h-100">
+                            <div class="position-relative">
+                                {% if media.type == 'image' %}
+                                    <a href="{{ media.url }}" target="_blank">
+                                        <img src="{{ media.url }}" class="card-img-top media-thumbnail" alt="Image">
+                                    </a>
+                                    <span class="badge bg-success media-type-badge">Image</span>
+                                {% elif media.type == 'video' %}
+                                    <div class="position-relative">
+                                        <a href="{{ media.url }}" target="_blank">
+                                            <div class="media-thumbnail d-flex align-items-center justify-content-center bg-dark">
+                                                <i class="fas fa-play-circle fa-3x text-light"></i>
+                                            </div>
+                                        </a>
+                                        <span class="badge bg-primary media-type-badge">Video</span>
+                                    </div>
+                                {% else %}
+                                    <div class="media-thumbnail d-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-file fa-3x text-secondary"></i>
+                                    </div>
+                                    <span class="badge bg-secondary media-type-badge">Unknown</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <small class="text-muted">Media URL (not downloaded)</small>
+                                </p>
+                                <a href="{{ media.url }}" class="btn btn-sm btn-outline-success" target="_blank">
+                                    <i class="fas fa-external-link-alt me-2"></i>Open URL
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

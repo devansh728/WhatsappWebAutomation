@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - WhatsApp Automation{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h1 class="h3 mb-3"><i class="fab fa-whatsapp text-success me-2"></i>WhatsApp Automation Dashboard</h1>
+        <p class="lead">Welcome to the WhatsApp Web Automation Dashboard. Here you can monitor extracted messages and media.</p>
+    </div>
+</div>
+
+<!-- React-powered Dashboard Stats -->
+<div id="react-dashboard-stats" class="fade-in"></div>
+
+<!-- Recent Activity -->
+<div class="card dashboard-card mt-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+            <i class="fas fa-history me-2"></i>Recent Chats
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if recent_chats %}
+            <div class="list-group">
+                {% for chat in recent_chats %}
+                    <a href="{% url 'whatsapp:message_list' %}?sender={{ chat.sender }}&receiver={{ chat.receiver }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ chat.sender }} → {{ chat.receiver }}</h5>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info mb-0">No recent chats available.</div>
+        {% endif %}
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'whatsapp:message_list' %}" class="btn btn-outline-success">View All Messages</a>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card dashboard-card mt-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+            <i class="fas fa-bolt me-2"></i>Quick Actions
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sync fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Run Scraper</h5>
+                        <p class="card-text">Start the WhatsApp Web scraper manually.</p>
+                        <a href="#" class="btn btn-success" onclick="alert('This would trigger the scraper to run now.')">Run Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Schedule Scraper</h5>
+                        <p class="card-text">Set up automated scraping schedule.</p>
+                        <a href="#" class="btn btn-success" onclick="alert('This would open scheduling options.')">Schedule</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-export fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Export Data</h5>
+                        <p class="card-text">Export messages and media data.</p>
+                        <a href="#" class="btn btn-success" onclick="alert('This would open export options.')">Export</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/babel">
+    // React components are initialized via main.js
+</script>
+{% endblock %} 

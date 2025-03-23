@@ -1,0 +1,167 @@
+/* Main styles for WhatsApp Automation */
+
+:root {
+    --whatsapp-green: #25D366;
+    --whatsapp-light-green: #DCF8C6;
+    --whatsapp-dark-green: #128C7E;
+    --whatsapp-teal: #075E54;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+}
+
+body {
+    padding-bottom: 70px;
+    background-color: #f5f5f5;
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--whatsapp-teal) !important;
+}
+
+.navbar-brand .fa-whatsapp {
+    color: var(--whatsapp-light-green);
+}
+
+/* Dashboard */
+.dashboard-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card {
+    background-color: white;
+    border-left: 5px solid var(--whatsapp-dark-green);
+}
+
+/* Messages */
+.message-bubble {
+    border-radius: 15px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    max-width: 75%;
+    position: relative;
+}
+
+.message-outgoing {
+    background-color: var(--whatsapp-light-green);
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}
+
+.message-incoming {
+    background-color: white;
+    margin-right: auto;
+    border-bottom-left-radius: 0;
+}
+
+.message-meta {
+    font-size: 0.75rem;
+    color: #666;
+    text-align: right;
+    margin-top: 5px;
+}
+
+.message-sender {
+    font-weight: bold;
+    color: var(--whatsapp-dark-green);
+}
+
+/* Media Gallery */
+.media-thumbnail {
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.media-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.media-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.media-type-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Filters */
+.filter-card {
+    background-color: var(--light-gray);
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Pagination */
+.pagination .page-item.active .page-link {
+    background-color: var(--whatsapp-dark-green);
+    border-color: var(--whatsapp-dark-green);
+}
+
+.pagination .page-link {
+    color: var(--whatsapp-dark-green);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 85%;
+    }
+    
+    .dashboard-card {
+        margin-bottom: 15px;
+    }
+}
+
+/* React components */
+.react-component {
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Utilities */
+.text-whatsapp {
+    color: var(--whatsapp-green);
+}
+
+.bg-whatsapp {
+    background-color: var(--whatsapp-green);
+}
+
+.bg-whatsapp-light {
+    background-color: var(--whatsapp-light-green);
+}
+
+/* Login Form */
+.login-form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+} 
